@@ -1,15 +1,16 @@
 import css from './ImageCard.module.css';
 
-const ImageCard = ({
-  data: {
-    alt_description,
-    urls: { small },
-  },
-}) => {
+export default function ImageCard({ imgLink, imgDescr, onImageClick, bigUrl }) {
   return (
-    <div className={css.container}>
-      <img src={small} alt={alt_description} width="200" height="170" />
+    <div>
+      <img
+        className={css.card}
+        src={imgLink}
+        alt={imgDescr}
+        onClick={() => {
+          onImageClick(bigUrl);
+        }}
+      />
     </div>
   );
-};
-export default ImageCard;
+}

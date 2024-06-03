@@ -1,13 +1,12 @@
 import css from './App.module.css';
 import { useEffect, useState } from 'react';
-import LoadMoreBtn from '../LoadMoreBtn/LoadMore';
-import Loader from '../Loader/Loader';
+import { getImages } from '../../images-api';
 import ImageGallery from '../ImageGallery/ImageGallery';
 import SearchBar from '../SearchBar/SearchBar';
+import Loader from '../Loader/Loader';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
+import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn';
 import ImageModal from '../ImageModal/ImageModal';
-import React from 'react';
-import { getImages } from '../../api-gallery';
 
 export default function App() {
   const [images, setImages] = useState([]);
@@ -15,60 +14,67 @@ export default function App() {
   const [isError, setIsError] = useState(false);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showBtn, setShowBtn] = useState(false);
-  const [modalIsOpen, setIsOpen] = React.useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [totalPage, setTotalPage] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState('');
+
   useEffect(() => {
-    if (searchQuery === '') {
+    if (searchQuery.trim() === '') {
       return;
     }
+
     async function fetchImages() {
       try {
         setIsLoading(true);
         setIsError(false);
         const data = await getImages(searchQuery, page);
+        setTotalPage(page < Math.ceil(data.total / 12));
         setImages(prevState => [...prevState, ...data.results]);
-        setShowBtn(data.total_pages && data.total_pages !== page);
       } catch (error) {
         setIsError(true);
+        console.log('error');
       } finally {
         setIsLoading(false);
       }
     }
+
     fetchImages();
   }, [page, searchQuery]);
 
-  const handleSearch = async topic => {
-    setSearchQuery(topic);
+  const handlSearch = async image => {
+    setSearchQuery(image);
     setPage(1);
     setImages([]);
   };
+
   const handleLoadMore = async () => {
     setPage(page + 1);
   };
 
-  function openModal(image) {
-    setIsOpen(true);
-    setSelectedImage(image);
-  }
+  const openModal = imageUrl => {
+    setSelectedImage(imageUrl);
+    setModalIsOpen(true);
+  };
 
-  function closeModal() {
-    setIsOpen(false);
-  }
+  const closeModal = () => {
+    setSelectedImage('');
+    setModalIsOpen(false);
+  };
+
   return (
     <div className={css.container}>
-      <SearchBar images={images} onSearch={handleSearch} />
-      <ImageGallery items={images} openModal={openModal} />
-      {isLoading && <Loader />}
-      {showBtn && !isLoading && <LoadMoreBtn onClick={handleLoadMore} />}
+      <SearchBar onSearch={handlSearch} />
       {isError && <ErrorMessage />}
-      {modalIsOpen && (
-        <ImageModal
-          image={selectedImage}
-          closeModal={closeModal}
-          data={selectedImage}
-        />
+      {images.length > 0 && (
+        <ImageGallery items={images} onImageClick={openModal} />
       )}
+      {isLoading && <Loader />}
+      {totalPage > 0 && !isLoading && <LoadMoreBtn onClick={handleLoadMore} />}
+      <ImageModal
+        isOpen={modalIsOpen}
+        onClose={closeModal}
+        imageUrl={selectedImage}
+      />
     </div>
   );
 }

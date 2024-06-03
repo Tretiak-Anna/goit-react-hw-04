@@ -1,12 +1,17 @@
 import ImageCard from '../ImageCard/ImageCard';
 import css from './ImageGallery.module.css';
 
-export default function ImageGallery({ items, openModal }) {
+export default function ImageGallery({ items, onImageClick }) {
   return (
-    <ul className={css.list}>
+    <ul className={css.gallery}>
       {items.map(item => (
-        <li className={css.item} key={item.id} onClick={() => openModal(item)}>
-          <ImageCard data={item} />
+        <li key={item.id}>
+          <ImageCard
+            imgLink={item.urls.small}
+            imgDescr={item.description}
+            onImageClick={onImageClick}
+            bigUrl={item.urls.regular}
+          />
         </li>
       ))}
     </ul>

@@ -1,11 +1,10 @@
 import css from './ErrorMessage.module.css';
 
-const ErrorMessage = () => {
+export default function ErrorMessage() {
   return (
-    <p className={css.error}>
+    <p className={css.message}>
       Something went wrong. Try to donate to Ukrainian soldiers and refresh the
       page
     </p>
   );
-};
-export default ErrorMessage;
+}

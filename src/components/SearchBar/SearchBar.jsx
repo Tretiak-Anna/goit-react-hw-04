@@ -1,32 +1,24 @@
-import css from './SearchBar.module.css';
 import { Field, Form, Formik } from 'formik';
 import toast, { Toaster } from 'react-hot-toast';
+import { IoSearchOutline } from 'react-icons/io5';
+import css from './SearchBar.module.css';
 
-function SearchBar({ onSearch }) {
-  const notify = () =>
-    toast('The field cannot be empty!', {
-      icon: '👏',
-      style: {
-        borderRadius: '10px',
-        background: ' #660066',
-        color: '#fff',
-        fontFamily: 'Tahoma',
-      },
-    });
+const notify = () => toast('You forgot to describe the image');
 
+export default function SearchBar({ onSearch }) {
   return (
-    <Formik
-      initialValues={{ query: '' }}
-      onSubmit={(values, actions) => {
-        if (values.query === '') {
-          notify();
-        } else {
-          onSearch(values.query);
-          actions.resetForm();
-        }
-      }}
-    >
-      <header className={css.container}>
+    <header className={css.header}>
+      <Formik
+        initialValues={{ query: '' }}
+        onSubmit={(values, actions) => {
+          if (values.query === '') {
+            notify();
+          } else {
+            onSearch(values.query);
+            actions.resetForm();
+          }
+        }}
+      >
         <Form className={css.form}>
           <Field
             className={css.input}
@@ -34,16 +26,14 @@ function SearchBar({ onSearch }) {
             name="query"
             autoComplete="off"
             autoFocus
-            placeholder="Search images and photos..."
+            placeholder="Search images and photos"
           />
-          <button className={css.button} type="submit">
-            Search
+          <button className={css.btn} type="submit">
+            <IoSearchOutline className={css.icon} size="20" />
           </button>
+          <Toaster position="top-right" />
         </Form>
-        <Toaster position="top-right" reverseOrder={false} />
-      </header>
-    </Formik>
+      </Formik>
+    </header>
   );
 }
-
-export default SearchBar;

@@ -1,9 +1,9 @@
-.list {
+.gallery {
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
-  list-style: none;
-  padding: 0;
-  margin: 0 auto;
+  gap: 24px;
+  margin: 24px;
+  text-align: center;
   justify-content: center;
+  
 }
